@@ -17,6 +17,13 @@ public class Player : MonoBehaviour
         m_rb = GetComponent<Rigidbody>();
     }
 
+    void Update()
+    {
+        CameraAngleUpdate();
+        MovementUpdate();
+        JumpUpdate();
+    }
+
     private void OnCollisionEnter(Collision other) 
     {
         ContactPoint[] contacts = other.contacts;
@@ -48,12 +55,6 @@ public class Player : MonoBehaviour
         m_isGrounded = false; // TODO: check if we are still on the ground in OnCollisionStay
     }
 
-    void Update()
-    {
-        CameraAngleUpdate();
-        MovementUpdate();
-        JumpUpdate();
-    }
 
     private void JumpUpdate()
     {
@@ -80,11 +81,13 @@ public class Player : MonoBehaviour
         horizontalMove.Normalize();
         horizontalMove *= this.m_speed * Time.deltaTime;
 
-        Vector3 currentVelocity = this.m_rb.velocity;
-        currentVelocity.x = 0;
-        currentVelocity.z = 0;
+        this.m_rb.MovePosition(this.transform.position + horizontalMove);
 
-        Vector3 targetVelocity = currentVelocity + horizontalMove;
-        this.m_rb.velocity = targetVelocity;
+        // Vector3 currentVelocity = this.m_rb.velocity;
+        // currentVelocity.x = 0;
+        // currentVelocity.z = 0;
+
+        // Vector3 targetVelocity = currentVelocity + horizontalMove;
+        // this.m_rb.velocity = targetVelocity;
     }
 }
