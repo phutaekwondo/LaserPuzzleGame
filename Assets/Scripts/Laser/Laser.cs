@@ -6,6 +6,7 @@ using UnityEngine;
 public class Laser : MonoBehaviour
 {
     float m_length = 10;
+    float m_maxLength = 10;
     LineRenderer m_lineRenderer;
     Vector3 m_startPosition;
     Vector3 m_direction;
@@ -24,9 +25,23 @@ public class Laser : MonoBehaviour
         UpdateLaserStart();
     }
 
+    private void FixedUpdate() 
+    {
+        UpdateLaser();
+    }
+
     private void UpdateLaser()
     {
-
+        // Raycast
+        RaycastHit hit;
+        if (Physics.Raycast(m_startPosition, m_direction, out hit, m_length))
+        {
+            m_length = hit.distance;
+        }
+        else
+        {
+            m_length = m_maxLength;
+        }
     }
 
     private void UpdateLaserStart()
