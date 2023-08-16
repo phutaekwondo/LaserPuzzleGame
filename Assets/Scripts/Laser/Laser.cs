@@ -30,13 +30,12 @@ public class Laser : MonoBehaviour
     {
         UpdateLaserPath();
         UpdateLineRenderer();
-
-        //clear the bounce points
-        m_bouncePoints.Clear();
     }
 
     private void UpdateLaserPath()
     {
+        //clear the bounce points
+        m_bouncePoints.Clear();
         // Raycast
         RaycastHit hit;
         if (Physics.Raycast(m_startPosition, m_startDirection, out hit, m_length))
