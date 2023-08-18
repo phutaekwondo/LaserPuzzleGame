@@ -44,7 +44,7 @@ public class Laser : MonoBehaviour
         int LaserInteractedLayer = LayerMask.NameToLayer("LaserInteracted");
         List<GameObject> hitObjects = new List<GameObject>();
 
-        bool isHit = Physics.Raycast(m_startPosition, m_startDirection, out hit, m_lastLength, 1 << laserInteractableLayer);
+        bool isHit = Physics.Raycast(m_startPosition, m_lastDirection, out hit, m_lastLength, 1 << laserInteractableLayer);
         while (isHit)
         {
             GameObject hitObject = hit.collider.gameObject;
@@ -55,7 +55,17 @@ public class Laser : MonoBehaviour
                 hitObjects.Add(hitObject);
 
                 m_bouncePoints.Add(hit.point);
-                m_lastDirection = laserInteractable.GetBounceDirection(m_startDirection);
+
+                //if the laser not bounce from the object, then it go straight through. need to make it stop
+                if (laserInteractable.IsBounce(m_lastDirection))
+                {
+                    m_lastDirection = laserInteractable.GetBounceDirection(m_lastDirection);
+                }
+                else
+                {
+                    Debug.Log("Laser is going straight through the object");
+                }
+
                 m_lastLength -= hit.distance;
 
                 isHit = Physics.Raycast(hit.point, m_lastDirection, out hit, m_lastLength, 1 << laserInteractableLayer);
