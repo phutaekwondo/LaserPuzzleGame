@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class Laser : MonoBehaviour
 {
-    float m_maxLength = 10;
+    float m_maxLength = 20;
     float m_lastLength = 0;
     LineRenderer m_lineRenderer;
     Vector3 m_startPosition;
@@ -35,52 +35,49 @@ public class Laser : MonoBehaviour
 
     private void UpdateLaserPath()
     {
-        //clear the bounce points
+        //reset the straight laser
         m_bouncePoints.Clear();
-
         m_lastLength = m_maxLength;
+        m_lastDirection = m_startDirection;
+
         RaycastHit hit;
-        int laserInteractableLayer = LayerMask.NameToLayer("LaserInteractable");
-        int LaserInteractedLayer = LayerMask.NameToLayer("LaserInteracted");
+        int laserInteractedLayer = LayerMask.NameToLayer("LaserInteracted");
+        List<int> hitLayers = new List<int>();
         List<GameObject> hitObjects = new List<GameObject>();
 
-        bool isHit = Physics.Raycast(m_startPosition, m_lastDirection, out hit, m_lastLength, 1 << laserInteractableLayer);
+        bool isHit = Physics.Raycast(m_startPosition, m_lastDirection, out hit, m_lastLength, ~(1<<laserInteractedLayer));
         while (isHit)
         {
             GameObject hitObject = hit.collider.gameObject;
-            LaserInteractable laserInteractable = hitObject.GetComponent<LaserInteractable>(); 
-            if (laserInteractable != null)
-            {
-                hitObject.layer = LaserInteractedLayer;
-                hitObjects.Add(hitObject);
+            hitObjects.Add(hitObject);
+            hitLayers.Add(hitObject.layer);
+            //avoid re-hitting the same object, which would cause an infinite loop
+            hitObject.layer = laserInteractedLayer;
 
+            LaserInteractable laserInteractable = hitObject.GetComponent<LaserInteractable>(); 
+
+            if (laserInteractable != null && laserInteractable.IsBounce(m_lastDirection))
+            {
                 m_bouncePoints.Add(hit.point);
 
-                //if the laser not bounce from the object, then it go straight through. need to make it stop
-                if (laserInteractable.IsBounce(m_lastDirection))
-                {
-                    m_lastDirection = laserInteractable.GetBounceDirection(m_lastDirection);
-                }
-                else
-                {
-                    Debug.Log("Laser is going straight through the object");
-                }
-
+                m_lastDirection = laserInteractable.GetBounceDirection(m_lastDirection);
                 m_lastLength -= hit.distance;
 
-                isHit = Physics.Raycast(hit.point, m_lastDirection, out hit, m_lastLength, 1 << laserInteractableLayer);
+                isHit = Physics.Raycast(hit.point, m_lastDirection, out hit, m_lastLength, ~(1<<laserInteractedLayer));
             }
             else
             {
                 isHit = false;
-                Debug.LogError("Hit object is not laser interactable");
+
+                //stop the laser
+                m_lastLength = hit.distance;
             }
         }
 
         //reset the layer of the hit objects
-        foreach (GameObject hitObject in hitObjects)
+        for (int i = 0; i < hitObjects.Count; i++)
         {
-            hitObject.layer = laserInteractableLayer;
+            hitObjects[i].layer = hitLayers[i];
         }
     }
 

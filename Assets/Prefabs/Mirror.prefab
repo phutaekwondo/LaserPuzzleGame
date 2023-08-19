@@ -470,7 +470,7 @@ GameObject:
   - component: {fileID: 123362395072570367}
   - component: {fileID: 123362395072570366}
   - component: {fileID: 123362395072570361}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: MirSurface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
