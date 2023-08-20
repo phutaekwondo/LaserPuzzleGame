@@ -1,10 +1,9 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    [SerializeField] protected Camera m_camera;
+    // [SerializeField] protected Camera m_camera;
     [SerializeField] float m_mouseSentivity = 1f;
     [SerializeField] float m_speed = 1f;
     [SerializeField] float m_jumpForce = 100f;
@@ -69,7 +68,7 @@ public class Player : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
-        this.m_camera.transform.Rotate(-mouseY * this.m_mouseSentivity, 0, 0);
+        // this.m_camera.transform.Rotate(-mouseY * this.m_mouseSentivity, 0, 0);
         this.transform.Rotate(0, mouseX * this.m_mouseSentivity, 0);
     }
     protected void MovementUpdate()
