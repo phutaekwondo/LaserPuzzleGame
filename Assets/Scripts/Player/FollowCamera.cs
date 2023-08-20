@@ -5,16 +5,10 @@ public class FollowCamera : MonoBehaviour
 {
     [SerializeField] Transform m_target;
 
-    Vector3 m_targetPrePosition;
+    Vector3 offset = new Vector3(14f, 20f, -14f); 
 
-    private void Start() 
-    {
-        m_targetPrePosition = m_target.position;
-    }
     private void Update() 
     {
-        Vector3 movement = m_target.position - m_targetPrePosition;
-        transform.position += movement;
-        m_targetPrePosition = m_target.position;
+        transform.position = m_target.position + offset;
     }
 }
