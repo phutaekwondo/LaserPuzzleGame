@@ -1812,6 +1812,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_target: {fileID: 2105229152}
+  m_maxDelayDistance: 5
+  m_maxCamSpeed: 10
+  m_minCamSpeed: 1
 --- !u!1 &1032426051
 GameObject:
   m_ObjectHideFlags: 0
@@ -3249,7 +3252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mouseSentivity: 1
-  m_speed: 20
+  m_speed: 40
   m_jumpForce: 200
   m_footCollider: {fileID: 1821417804}
 --- !u!1001 &123362395618773892
