@@ -3,22 +3,21 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
-    // [SerializeField] protected Camera m_camera;
-    [SerializeField] float m_mouseSentivity = 1f;
     [SerializeField] float m_speed = 1f;
     [SerializeField] float m_jumpForce = 100f;
     [SerializeField] Collider m_footCollider;
+    Vector3 m_rightDirection;
     private Rigidbody m_rb;
 
     private bool m_isGrounded = false;
 
     private void Awake() {
         m_rb = GetComponent<Rigidbody>();
+        m_rightDirection = transform.right;
     }
 
     void Update()
     {
-        CameraAngleUpdate();
         MovementUpdate();
         JumpUpdate();
     }
@@ -63,30 +62,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    protected void CameraAngleUpdate()
-    {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
-
-        // this.m_camera.transform.Rotate(-mouseY * this.m_mouseSentivity, 0, 0);
-        this.transform.Rotate(0, mouseX * this.m_mouseSentivity, 0);
-    }
     protected void MovementUpdate()
     {
-        float side = Input.GetAxis("Horizontal");
-        float straight = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
 
-        Vector3 horizontalMove = this.transform.right * side + this.transform.forward * straight;
-        horizontalMove.Normalize();
-        horizontalMove *= this.m_speed * Time.deltaTime;
+        Vector3 forwardDirection = new Vector3(-m_rightDirection.z, 0, m_rightDirection.x);
 
-        this.m_rb.MovePosition(this.transform.position + horizontalMove);
+        Vector3 movement = (m_rightDirection * horizontal + forwardDirection * vertical).normalized * m_speed * Time.deltaTime;
+        m_rb.MovePosition(transform.position + movement);
 
-        // Vector3 currentVelocity = this.m_rb.velocity;
-        // currentVelocity.x = 0;
-        // currentVelocity.z = 0;
-
-        // Vector3 targetVelocity = currentVelocity + horizontalMove;
-        // this.m_rb.velocity = targetVelocity;
+        if (movement.magnitude > 0)
+        {
+            this.transform.forward = movement.normalized;
+        }
     }
 }
